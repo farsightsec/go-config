@@ -1,0 +1,23 @@
+Source: go-config
+Priority: optional
+Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
+Build-Depends: debhelper (>= 9), dh-golang, golang-1.11-go,
+ golang-gopkg-yaml.v2-dev
+Standards-Version: 3.9.8
+Section: devel
+Vcs-Browser: https://github.com/farsightsec/go-config
+XS-Go-Import-Path: github.com/farsightsec/go-config
+
+Package: golang-github-farsightsec-go-config-dev
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Minimalist Go Config Library
+ Contains types useful for validating, parsing, and loading values of
+ some useful types in configuration files.
+
+Package: golang-github-farsightsec-go-config-env-dev
+Architecture: any
+Depends: golang-github-farsightsec-go-config-dev (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Go Config Library for importing environment configuration
+ Provides primitives for loading configuration from environment variables.

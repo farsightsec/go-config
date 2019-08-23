@@ -1,0 +1,17 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: golang-github-farsightsec-go-config
+Source: <http://github.com/farsightsec/go-config>
+
+Files: *
+Copyright: 2015-2018, 2019 Farsight Security, Inc. <software@farsightsecurity.com>
+License: MPL-2.0
+
+Files: debian/*
+Copyright: 2018, 2019 Farsight Security, Inc. <software@farsightsecurity.com>
+License: MPL-2.0
+
+License: MPL-2.0
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
