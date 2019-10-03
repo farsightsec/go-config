@@ -22,7 +22,7 @@ import (
 func LoadYAML(i interface{}, filename string, required bool) error {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
-		if !required && err == os.ErrNotExist {
+		if !required && os.IsNotExist(err) {
 			return nil
 		}
 		return err
@@ -37,7 +37,7 @@ func LoadYAML(i interface{}, filename string, required bool) error {
 func LoadJSON(i interface{}, filename string, required bool) error {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
-		if !required && err == os.ErrNotExist {
+		if !required && os.IsNotExist(err) {
 			return nil
 		}
 		return err
