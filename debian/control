@@ -1,7 +1,7 @@
 Source: go-config
 Priority: optional
 Maintainer: Farsight Security, Inc. <software@farsightsecurity.com>
-Build-Depends: debhelper (>= 9), dh-golang, golang-1.11-go,
+Build-Depends: debhelper (>= 9), dh-golang, golang-go (>= 2:1.11~),
  golang-gopkg-yaml.v2-dev
 Standards-Version: 3.9.8
 Section: devel
