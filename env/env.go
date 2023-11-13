@@ -14,10 +14,10 @@
 // Configuration can come from hardcoded defaults, environment, configuration
 // files, and command line flags. To implement the usual precedence of:
 //
-//      1) built-in defaults (lowest)
-//      2) environment parameters
-//      3) configuration file parameters
-//      4) command line parameters (highest)
+//  1. built-in defaults (lowest)
+//  2. environment parameters
+//  3. configuration file parameters
+//  4. command line parameters (highest)
 //
 // define defaults and command line bindings (with the flag package) first,
 // followed by environment bindings with this package. Then load values from
