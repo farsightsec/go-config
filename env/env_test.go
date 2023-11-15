@@ -32,6 +32,37 @@ func checkOK(t *testing.T, err error, ok bool) {
 	}
 }
 
+func TestErrorHandler(t *testing.T) {
+	test_name := "TEST_BOOL_INVALID"
+	handler_called := false
+	var b bool
+	errorHandler := func(name string, err error) error {
+		if err != nil {
+			handler_called = true
+		}
+
+		if name != test_name {
+			t.Error("Unexpected env variable name: ", name)
+		}
+		return err
+	}
+
+	ErrorHandler = errorHandler
+	BoolVar(&b, test_name)
+	if handler_called == false {
+		t.Error("Error handler is not called")
+	}
+
+	handler_called = false
+	test_name = "TEST_BOOL_TRUE"
+	BoolVar(&b, test_name)
+	if handler_called == true {
+		t.Error("Error handler is called")
+	}
+
+	ErrorHandler = DefaultErrorHandler
+}
+
 func TestEnvTypes(t *testing.T) {
 	var i int
 	var i64 int64

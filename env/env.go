@@ -35,11 +35,11 @@ import (
 	"time"
 )
 
-type ErrorHandler func(string, error) error
+type errorHandler func(string, error) error
 
-var errorHandler ErrorHandler = defaultEnvErrorHandler
+var ErrorHandler errorHandler = DefaultErrorHandler
 
-func defaultEnvErrorHandler(key string, err error) error {
+func DefaultErrorHandler(key string, err error) error {
 	return err
 }
 
@@ -59,7 +59,7 @@ func Var(v Value, key string) error {
 	if val == "" {
 		return nil
 	}
-	return errorHandler(key, v.Set(val))
+	return ErrorHandler(key, v.Set(val))
 }
 
 // StringVar loads s's string value from environment variable key, if key
@@ -82,7 +82,7 @@ func BoolVar(b *bool, key string) error {
 	}
 	val, err := strconv.ParseBool(v)
 	*b = val
-	return errorHandler(key, err)
+	return ErrorHandler(key, err)
 }
 
 type intValue int
