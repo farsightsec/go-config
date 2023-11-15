@@ -35,6 +35,14 @@ import (
 	"time"
 )
 
+type ErrorHandler func(string, error) error
+
+var errorHandler ErrorHandler = defaultEnvErrorHandler
+
+func defaultEnvErrorHandler(key string, err error) error {
+	return err
+}
+
 // A Value can be converted from a string.
 //
 // Note that this Value interface is a subset of flag.Value, so types
@@ -51,7 +59,7 @@ func Var(v Value, key string) error {
 	if val == "" {
 		return nil
 	}
-	return v.Set(val)
+	return errorHandler(key, v.Set(val))
 }
 
 // StringVar loads s's string value from environment variable key, if key
@@ -74,7 +82,7 @@ func BoolVar(b *bool, key string) error {
 	}
 	val, err := strconv.ParseBool(v)
 	*b = val
-	return err
+	return errorHandler(key, err)
 }
 
 type intValue int
