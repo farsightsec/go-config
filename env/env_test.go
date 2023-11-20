@@ -32,37 +32,6 @@ func checkOK(t *testing.T, err error, ok bool) {
 	}
 }
 
-func TestErrorHandler(t *testing.T) {
-	test_name := "TEST_BOOL_INVALID"
-	handler_called := false
-	var b bool
-	errorHandler := func(name string, err error) error {
-		if err != nil {
-			handler_called = true
-		}
-
-		if name != test_name {
-			t.Error("Unexpected env variable name: ", name)
-		}
-		return err
-	}
-
-	ErrorHandler = errorHandler
-	BoolVar(&b, test_name)
-	if handler_called == false {
-		t.Error("Error handler is not called")
-	}
-
-	handler_called = false
-	test_name = "TEST_BOOL_TRUE"
-	BoolVar(&b, test_name)
-	if handler_called == true {
-		t.Error("Error handler is called")
-	}
-
-	ErrorHandler = DefaultErrorHandler
-}
-
 func TestEnvTypes(t *testing.T) {
 	var i int
 	var i64 int64
@@ -91,7 +60,7 @@ func TestEnvMissing(t *testing.T) {
 	checkOK(t, BoolVar(&b, "TEST_MISSING"), b)
 }
 
-func TestEnvParse(t *testing.T) {
+func TestEnvConfig(t *testing.T) {
 	var i int = 0
 	var i64 int64 = 0
 	var u uint = 0
@@ -101,30 +70,19 @@ func TestEnvParse(t *testing.T) {
 	var b bool = false
 	var d time.Duration = time.Second
 
-	Mode = Indirect
-	checkOK(t, IntVar(&i, "TEST_NUM"), i == 0)
-	checkOK(t, Int64Var(&i64, "TEST_NUM"), i64 == 0)
-	checkOK(t, UintVar(&u, "TEST_NUM"), u == 0)
-	checkOK(t, Uint64Var(&u64, "TEST_NUM"), u64 == 0)
-	checkOK(t, Float64Var(&f64, "TEST_NUM"), f64 == 0)
-	checkOK(t, StringVar(&s, "TEST_NUM"), s == "")
-	checkOK(t, DurationVar(&d, "TEST_DURATION"), d == time.Second)
-	checkOK(t, BoolVar(&b, "TEST_BOOL_TRUE"), !b)
-	err := Parse()
-	if err != nil {
-		t.Error(err.Error())
-	}
-	checkOK(t, nil, i == 1048576)
-	checkOK(t, nil, i64 == 1048576)
-	checkOK(t, nil, u == 1048576)
-	checkOK(t, nil, u64 == 1048576)
-	checkOK(t, nil, f64 == 1048576)
-	checkOK(t, nil, s == "1048576")
-	checkOK(t, nil, d == 100*time.Millisecond)
-	checkOK(t, nil, b)
-	checkOK(t, BoolVar(&b, "TEST_BOOL_INVALID"), b)
-	err = Parse()
-	if err == nil {
-		t.Error("Expected bool parse error")
+	ec := NewConfig(false)
+
+	checkOK(t, ec.Var(&i, "TEST_NUM"), i == 1048576)
+	checkOK(t, ec.Var(&i64, "TEST_NUM"), i64 == 1048576)
+	checkOK(t, ec.Var(&u, "TEST_NUM"), u == 1048576)
+	checkOK(t, ec.Var(&u64, "TEST_NUM"), u64 == 1048576)
+	checkOK(t, ec.Var(&f64, "TEST_NUM"), f64 == 1048576)
+	checkOK(t, ec.Var(&s, "TEST_NUM"), s == "1048576")
+	checkOK(t, ec.Var(&d, "TEST_DURATION"), d == 100*time.Millisecond)
+	checkOK(t, ec.Var(&b, "TEST_BOOL_TRUE"), b)
+	checkOK(t, ec.Var(&b, "TEST_BOOL_FALSE"), !b)
+
+	if ec.Var(&b, "TEST_BOOL_INVALID") == nil {
+		t.Error("Expected parse error")
 	}
 }

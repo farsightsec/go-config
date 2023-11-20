@@ -30,36 +30,11 @@
 package env
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
 )
-
-type mode int
-
-const (
-	Direct   mode = 0
-	Indirect      = 1
-)
-
-var (
-	Mode mode = Direct
-)
-
-type errorHandler func(string, error) error
-
-var ErrorHandler errorHandler = DefaultErrorHandler
-
-type envVar struct {
-	key string
-	v   any
-}
-
-var envVarQueue = make([]envVar, 0)
-
-func DefaultErrorHandler(key string, err error) error {
-	return err
-}
 
 // A Value can be converted from a string.
 //
@@ -70,26 +45,19 @@ type Value interface {
 	Set(string) error
 }
 
-func setVar(v Value, key string) error {
+// Var loads Value v's value from the environment variable key, if key is
+// set and nonempty.
+func Var(v Value, key string) error {
 	val := os.Getenv(key)
 	if val == "" {
 		return nil
 	}
-	return ErrorHandler(key, v.Set(val))
+	return v.Set(val)
 }
 
-// Var loads Value v's value from the environment variable key, if key is
-// set and nonempty.
-func Var(v Value, key string) error {
-	if Mode == Direct {
-		return setVar(v, key)
-	}
-
-	envVarQueue = append(envVarQueue, envVar{key, v})
-	return nil
-}
-
-func stringVar(s *string, key string) error {
+// StringVar loads s's string value from environment variable key, if key
+// is set and nonempty.
+func StringVar(s *string, key string) error {
 	v := os.Getenv(key)
 	if v != "" {
 		*s = v
@@ -97,35 +65,17 @@ func stringVar(s *string, key string) error {
 	return nil
 }
 
-// StringVar loads s's string value from environment variable key, if key
-// is set and nonempty.
-func StringVar(s *string, key string) error {
-	if Mode == Direct {
-		return stringVar(s, key)
-	}
-	envVarQueue = append(envVarQueue, envVar{key, s})
-	return nil
-}
-
-func boolVar(b *bool, key string) error {
+// StringVar loads a boolean value from environment variable key, if key
+// is set and nonempty. The value associated with key is parsed with
+// strconv.ParseBool.
+func BoolVar(b *bool, key string) error {
 	v := os.Getenv(key)
 	if v == "" {
 		return nil
 	}
 	val, err := strconv.ParseBool(v)
 	*b = val
-	return ErrorHandler(key, err)
-}
-
-// StringVar loads a boolean value from environment variable key, if key
-// is set and nonempty. The value associated with key is parsed with
-// strconv.ParseBool.
-func BoolVar(b *bool, key string) error {
-	if Mode == Direct {
-		return boolVar(b, key)
-	}
-	envVarQueue = append(envVarQueue, envVar{key, b})
-	return nil
+	return err
 }
 
 type intValue int
@@ -207,32 +157,47 @@ func DurationVar(d *time.Duration, key string) error {
 	return Var((*durationValue)(d), key)
 }
 
-// Parse list of environment variables
-// Set corresponding values, return conversion
-func Parse() error {
-	if Mode == Direct {
-		return nil
+type envConfig struct {
+	exitOnError bool
+}
+
+// Create envConfig object which allows handling of env variable parsing error
+func NewConfig(eoe bool) envConfig {
+	return envConfig{exitOnError: eoe}
+}
+
+func (e *envConfig) handleError(key string, err error) error {
+	if err != nil {
+		println(key, "triggered the following error: ", err.Error())
+	}
+	if e.exitOnError {
+		os.Exit(2)
+	}
+	return err
+}
+
+func (e *envConfig) Var(v any, key string) error {
+	switch v.(type) {
+	case *string:
+		return e.handleError(key, StringVar(v.(*string), key))
+	case *bool:
+		return e.handleError(key, BoolVar(v.(*bool), key))
+	case *int:
+		return e.handleError(key, IntVar(v.(*int), key))
+		break
+	case *int64:
+		return e.handleError(key, Int64Var(v.(*int64), key))
+	case *uint:
+		return e.handleError(key, UintVar(v.(*uint), key))
+	case *uint64:
+		return e.handleError(key, Uint64Var(v.(*uint64), key))
+	case *float64:
+		return e.handleError(key, Float64Var(v.(*float64), key))
+	case *time.Duration:
+		return e.handleError(key, DurationVar(v.(*time.Duration), key))
+	default:
+		break
 	}
 
-	var err error
-
-	for _, v := range envVarQueue {
-		switch v.v.(type) {
-		case *bool:
-			err = boolVar(v.v.(*bool), v.key)
-			break
-		case *string:
-			err = stringVar(v.v.(*string), v.key)
-			break
-		default:
-			err = setVar(v.v.(Value), v.key)
-			break
-		}
-
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return e.handleError(key, fmt.Errorf("unimplemented environment variable type %T", v))
 }
