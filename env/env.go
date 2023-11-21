@@ -48,9 +48,9 @@ type Value interface {
 type ErrorHandleMode int
 
 const (
-	ReturnError  ErrorHandleMode = 0
-	ExitOnError                  = 1
-	PanicOnError                 = 2
+	ContinueOnError ErrorHandleMode = 0
+	ExitOnError                     = 1
+	PanicOnError                    = 2
 )
 
 // Var loads Value v's value from the environment variable key, if key is
@@ -183,7 +183,7 @@ func (e *envConfig) handleError(key string, err error) error {
 		os.Exit(2)
 	case PanicOnError:
 		panic(err)
-	case ReturnError:
+	case ContinueOnError:
 	default:
 		break
 	}
