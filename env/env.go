@@ -45,6 +45,14 @@ type Value interface {
 	Set(string) error
 }
 
+type ErrorHandleMode int
+
+const (
+	ReturnError  ErrorHandleMode = 0
+	ExitOnError                  = 1
+	PanicOnError                 = 2
+)
+
 // Var loads Value v's value from the environment variable key, if key is
 // set and nonempty.
 func Var(v Value, key string) error {
@@ -158,20 +166,26 @@ func DurationVar(d *time.Duration, key string) error {
 }
 
 type envConfig struct {
-	exitOnError bool
+	errorMode ErrorHandleMode
 }
 
 // Create envConfig object which allows handling of env variable parsing error
-func NewConfig(eoe bool) envConfig {
-	return envConfig{exitOnError: eoe}
+func NewConfig(mode ErrorHandleMode) envConfig {
+	return envConfig{errorMode: mode}
 }
 
 func (e *envConfig) handleError(key string, err error) error {
 	if err != nil {
 		println(key, "triggered the following error: ", err.Error())
 	}
-	if e.exitOnError {
+	switch e.errorMode {
+	case ExitOnError:
 		os.Exit(2)
+	case PanicOnError:
+		panic(err)
+	case ReturnError:
+	default:
+		break
 	}
 	return err
 }

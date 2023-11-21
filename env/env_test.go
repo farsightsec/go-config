@@ -70,7 +70,7 @@ func TestEnvConfig(t *testing.T) {
 	var b bool = false
 	var d time.Duration = time.Second
 
-	ec := NewConfig(false)
+	ec := NewConfig(ReturnError)
 
 	checkOK(t, ec.Var(&i, "TEST_NUM"), i == 1048576)
 	checkOK(t, ec.Var(&i64, "TEST_NUM"), i64 == 1048576)
