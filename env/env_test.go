@@ -9,6 +9,7 @@
 package env
 
 import (
+	"github.com/farsightsec/go-config"
 	"os"
 	"testing"
 	"time"
@@ -69,8 +70,9 @@ func TestEnvConfig(t *testing.T) {
 	var s string = ""
 	var b bool = false
 	var d time.Duration = time.Second
+	var ss = config.String{}
 
-	ec := NewConfig(ContinueOnError)
+	ec := NewConfig(false)
 
 	checkOK(t, ec.Var(&i, "TEST_NUM"), i == 1048576)
 	checkOK(t, ec.Var(&i64, "TEST_NUM"), i64 == 1048576)
@@ -78,6 +80,7 @@ func TestEnvConfig(t *testing.T) {
 	checkOK(t, ec.Var(&u64, "TEST_NUM"), u64 == 1048576)
 	checkOK(t, ec.Var(&f64, "TEST_NUM"), f64 == 1048576)
 	checkOK(t, ec.Var(&s, "TEST_NUM"), s == "1048576")
+	checkOK(t, ec.Var(&ss, "TEST_NUM"), ss.String() == "1048576")
 	checkOK(t, ec.Var(&d, "TEST_DURATION"), d == 100*time.Millisecond)
 	checkOK(t, ec.Var(&b, "TEST_BOOL_TRUE"), b)
 	checkOK(t, ec.Var(&b, "TEST_BOOL_FALSE"), !b)

@@ -45,14 +45,6 @@ type Value interface {
 	Set(string) error
 }
 
-type ErrorHandleMode int
-
-const (
-	ContinueOnError ErrorHandleMode = 0
-	ExitOnError                     = 1
-	PanicOnError                    = 2
-)
-
 // Var loads Value v's value from the environment variable key, if key is
 // set and nonempty.
 func Var(v Value, key string) error {
@@ -166,52 +158,44 @@ func DurationVar(d *time.Duration, key string) error {
 }
 
 type envConfig struct {
-	errorMode ErrorHandleMode
+	ExitOnError bool
 }
 
-// Create envConfig object which allows handling of env variable parsing error
-func NewConfig(mode ErrorHandleMode) envConfig {
-	return envConfig{errorMode: mode}
-}
-
-func (e *envConfig) handleError(key string, err error) error {
-	if err != nil {
-		println(key, "triggered the following error: ", err.Error())
-	}
-	switch e.errorMode {
-	case ExitOnError:
-		os.Exit(2)
-	case PanicOnError:
-		panic(err)
-	case ContinueOnError:
-	default:
-		break
-	}
-	return err
+// NewConfig creates an envConfig object which allows handling of env variable parsing error
+func NewConfig(exitOnError bool) envConfig {
+	return envConfig{ExitOnError: exitOnError}
 }
 
 func (e *envConfig) Var(v any, key string) error {
-	switch v.(type) {
+	var err error
+
+	switch t := v.(type) {
 	case *string:
-		return e.handleError(key, StringVar(v.(*string), key))
+		err = StringVar(t, key)
 	case *bool:
-		return e.handleError(key, BoolVar(v.(*bool), key))
+		err = BoolVar(t, key)
 	case *int:
-		return e.handleError(key, IntVar(v.(*int), key))
-		break
+		err = IntVar(t, key)
 	case *int64:
-		return e.handleError(key, Int64Var(v.(*int64), key))
+		err = Int64Var(t, key)
 	case *uint:
-		return e.handleError(key, UintVar(v.(*uint), key))
+		err = UintVar(t, key)
 	case *uint64:
-		return e.handleError(key, Uint64Var(v.(*uint64), key))
+		err = Uint64Var(t, key)
 	case *float64:
-		return e.handleError(key, Float64Var(v.(*float64), key))
+		err = Float64Var(t, key)
 	case *time.Duration:
-		return e.handleError(key, DurationVar(v.(*time.Duration), key))
+		err = DurationVar(t, key)
+	case Value:
+		err = Var(t, key)
 	default:
-		break
+		err = fmt.Errorf("unimplemented environment variable type %T", v)
 	}
 
-	return e.handleError(key, fmt.Errorf("unimplemented environment variable type %T", v))
+	if err != nil && e.ExitOnError {
+		fmt.Fprintf(os.Stderr, "%s encountered parsing error: %v\n", key, err)
+		os.Exit(1)
+	}
+
+	return err
 }
