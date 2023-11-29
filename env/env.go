@@ -157,45 +157,66 @@ func DurationVar(d *time.Duration, key string) error {
 	return Var((*durationValue)(d), key)
 }
 
+// ErrorHandling has advantage over bool as it can be extended
+// to handle additional cases whereas bool cannot
+type ErrorHandling int
+
+const (
+	ContinueOnError ErrorHandling = 0
+	ExitOnError                   = 1
+)
+
 type envConfig struct {
-	ExitOnError bool
+	errorHandling ErrorHandling
 }
 
 // NewConfig creates an envConfig object which allows handling of env variable parsing error
-func NewConfig(exitOnError bool) envConfig {
-	return envConfig{ExitOnError: exitOnError}
+func NewConfig(errorHandling ErrorHandling) envConfig {
+	return envConfig{errorHandling: errorHandling}
 }
 
-func (e *envConfig) Var(v any, key string) error {
-	var err error
-
-	switch t := v.(type) {
-	case *string:
-		err = StringVar(t, key)
-	case *bool:
-		err = BoolVar(t, key)
-	case *int:
-		err = IntVar(t, key)
-	case *int64:
-		err = Int64Var(t, key)
-	case *uint:
-		err = UintVar(t, key)
-	case *uint64:
-		err = Uint64Var(t, key)
-	case *float64:
-		err = Float64Var(t, key)
-	case *time.Duration:
-		err = DurationVar(t, key)
-	case Value:
-		err = Var(t, key)
-	default:
-		err = fmt.Errorf("unimplemented environment variable type %T", v)
-	}
-
-	if err != nil && e.ExitOnError {
+// handleError handles envConfig on error behavior
+func (e *envConfig) handleError(key string, err error) error {
+	if err != nil && e.errorHandling == ExitOnError {
 		fmt.Fprintf(os.Stderr, "%s encountered parsing error: %v\n", key, err)
 		os.Exit(1)
 	}
 
 	return err
+}
+
+func (e *envConfig) StringVar(v *string, key string) error {
+	return e.handleError(key, StringVar(v, key))
+}
+
+func (e *envConfig) BoolVar(v *bool, key string) error {
+	return e.handleError(key, BoolVar(v, key))
+}
+
+func (e *envConfig) IntVar(v *int, key string) error {
+	return e.handleError(key, IntVar(v, key))
+}
+
+func (e *envConfig) Int64Var(v *int64, key string) error {
+	return e.handleError(key, Int64Var(v, key))
+}
+
+func (e *envConfig) UintVar(v *uint, key string) error {
+	return e.handleError(key, UintVar(v, key))
+}
+
+func (e *envConfig) Uint64Var(v *uint64, key string) error {
+	return e.handleError(key, Uint64Var(v, key))
+}
+
+func (e *envConfig) Float64Var(v *float64, key string) error {
+	return e.handleError(key, Float64Var(v, key))
+}
+
+func (e *envConfig) DurationVar(v *time.Duration, key string) error {
+	return e.handleError(key, DurationVar(v, key))
+}
+
+func (e *envConfig) Var(v Value, key string) error {
+	return e.handleError(key, Var(v, key))
 }

@@ -72,20 +72,20 @@ func TestEnvConfig(t *testing.T) {
 	var d time.Duration = time.Second
 	var ss = config.String{}
 
-	ec := NewConfig(false)
+	ec := NewConfig(ContinueOnError)
 
-	checkOK(t, ec.Var(&i, "TEST_NUM"), i == 1048576)
-	checkOK(t, ec.Var(&i64, "TEST_NUM"), i64 == 1048576)
-	checkOK(t, ec.Var(&u, "TEST_NUM"), u == 1048576)
-	checkOK(t, ec.Var(&u64, "TEST_NUM"), u64 == 1048576)
-	checkOK(t, ec.Var(&f64, "TEST_NUM"), f64 == 1048576)
-	checkOK(t, ec.Var(&s, "TEST_NUM"), s == "1048576")
+	checkOK(t, ec.IntVar(&i, "TEST_NUM"), i == 1048576)
+	checkOK(t, ec.Int64Var(&i64, "TEST_NUM"), i64 == 1048576)
+	checkOK(t, ec.UintVar(&u, "TEST_NUM"), u == 1048576)
+	checkOK(t, ec.Uint64Var(&u64, "TEST_NUM"), u64 == 1048576)
+	checkOK(t, ec.Float64Var(&f64, "TEST_NUM"), f64 == 1048576)
+	checkOK(t, ec.StringVar(&s, "TEST_NUM"), s == "1048576")
 	checkOK(t, ec.Var(&ss, "TEST_NUM"), ss.String() == "1048576")
-	checkOK(t, ec.Var(&d, "TEST_DURATION"), d == 100*time.Millisecond)
-	checkOK(t, ec.Var(&b, "TEST_BOOL_TRUE"), b)
-	checkOK(t, ec.Var(&b, "TEST_BOOL_FALSE"), !b)
+	checkOK(t, ec.DurationVar(&d, "TEST_DURATION"), d == 100*time.Millisecond)
+	checkOK(t, ec.BoolVar(&b, "TEST_BOOL_TRUE"), b)
+	checkOK(t, ec.BoolVar(&b, "TEST_BOOL_FALSE"), !b)
 
-	if ec.Var(&b, "TEST_BOOL_INVALID") == nil {
+	if ec.BoolVar(&b, "TEST_BOOL_INVALID") == nil {
 		t.Error("Expected parse error")
 	}
 }
