@@ -12,13 +12,12 @@
 //
 // This allows you to Unmarshal JSON or YAML into:
 //
-//      type myConfig struct {
-//              Server    config.URL
-//              TLS       config.TLS
-//      }
+//	type myConfig struct {
+//	        Server    config.URL
+//	        TLS       config.TLS
+//	}
 //
 // and have a net/url url.URL value available as cfg.Server.URL, and
 // a TLS configuration as cfg.TLS.Config, with the config package taking
 // care of parsing and validation.
-//
 package config
