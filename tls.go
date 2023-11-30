@@ -21,6 +21,7 @@ import (
 // conversion to and from string format.
 //
 // Supported string values are:
+//
 //	"none":           tls.NoClientCert  (default)
 //	"request":        tls.RequestClientCert
 //	"require":        tls.RequireAnyClientCert
@@ -49,13 +50,13 @@ func (auth *TLSClientAuth) String() string {
 type invalidClientAuthType string
 
 func (i invalidClientAuthType) Error() string {
-	return fmt.Sprintf(`Invalid ClientAuthType "%s".`, i)
+	return fmt.Sprintf(`Invalid ClientAuthType "%s".`, string(i))
 }
 
 type invalidClientAuthTypeValue tls.ClientAuthType
 
 func (i invalidClientAuthTypeValue) Error() string {
-	return fmt.Sprintf("Invalid ClientAuthType value %v", i)
+	return fmt.Sprintf("Invalid ClientAuthType value %v", int(i))
 }
 
 // Set satisfies the flag.Value interface.
