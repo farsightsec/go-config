@@ -14,10 +14,10 @@
 // Configuration can come from hardcoded defaults, environment, configuration
 // files, and command line flags. To implement the usual precedence of:
 //
-//      1) built-in defaults (lowest)
-//      2) environment parameters
-//      3) configuration file parameters
-//      4) command line parameters (highest)
+//  1. built-in defaults (lowest)
+//  2. environment parameters
+//  3. configuration file parameters
+//  4. command line parameters (highest)
 //
 // define defaults and command line bindings (with the flag package) first,
 // followed by environment bindings with this package. Then load values from
@@ -30,6 +30,7 @@
 package env
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -154,4 +155,68 @@ func (d *durationValue) Set(s string) error {
 // The value associated with key may be in any format recognized by time.ParseDuration
 func DurationVar(d *time.Duration, key string) error {
 	return Var((*durationValue)(d), key)
+}
+
+// ErrorHandling has advantage over bool as it can be extended
+// to handle additional cases whereas bool cannot
+type ErrorHandling int
+
+const (
+	ContinueOnError ErrorHandling = 0
+	ExitOnError                   = 1
+)
+
+type envConfig struct {
+	errorHandling ErrorHandling
+}
+
+// NewConfig creates an envConfig object which allows handling of env variable parsing error
+func NewConfig(errorHandling ErrorHandling) envConfig {
+	return envConfig{errorHandling: errorHandling}
+}
+
+// handleError handles envConfig on error behavior
+func (e *envConfig) handleError(key string, err error) error {
+	if err != nil && e.errorHandling == ExitOnError {
+		fmt.Fprintf(os.Stderr, "%s encountered parsing error: %v\n", key, err)
+		os.Exit(1)
+	}
+
+	return err
+}
+
+func (e *envConfig) StringVar(v *string, key string) error {
+	return e.handleError(key, StringVar(v, key))
+}
+
+func (e *envConfig) BoolVar(v *bool, key string) error {
+	return e.handleError(key, BoolVar(v, key))
+}
+
+func (e *envConfig) IntVar(v *int, key string) error {
+	return e.handleError(key, IntVar(v, key))
+}
+
+func (e *envConfig) Int64Var(v *int64, key string) error {
+	return e.handleError(key, Int64Var(v, key))
+}
+
+func (e *envConfig) UintVar(v *uint, key string) error {
+	return e.handleError(key, UintVar(v, key))
+}
+
+func (e *envConfig) Uint64Var(v *uint64, key string) error {
+	return e.handleError(key, Uint64Var(v, key))
+}
+
+func (e *envConfig) Float64Var(v *float64, key string) error {
+	return e.handleError(key, Float64Var(v, key))
+}
+
+func (e *envConfig) DurationVar(v *time.Duration, key string) error {
+	return e.handleError(key, DurationVar(v, key))
+}
+
+func (e *envConfig) Var(v Value, key string) error {
+	return e.handleError(key, Var(v, key))
 }

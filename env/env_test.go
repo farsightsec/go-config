@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Farsight Security, Inc.
+ * Copyright 2023 Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 package env
 
 import (
+	"github.com/farsightsec/go-config"
 	"os"
 	"testing"
 	"time"
@@ -58,4 +59,33 @@ func TestEnvMissing(t *testing.T) {
 	b := true
 	checkOK(t, IntVar(&i, "TEST_MISSING"), i == 10)
 	checkOK(t, BoolVar(&b, "TEST_MISSING"), b)
+}
+
+func TestEnvConfig(t *testing.T) {
+	var i int = 0
+	var i64 int64 = 0
+	var u uint = 0
+	var u64 uint64 = 0
+	var f64 float64 = 0
+	var s string = ""
+	var b bool = false
+	var d time.Duration = time.Second
+	var ss = config.String{}
+
+	ec := NewConfig(ContinueOnError)
+
+	checkOK(t, ec.IntVar(&i, "TEST_NUM"), i == 1048576)
+	checkOK(t, ec.Int64Var(&i64, "TEST_NUM"), i64 == 1048576)
+	checkOK(t, ec.UintVar(&u, "TEST_NUM"), u == 1048576)
+	checkOK(t, ec.Uint64Var(&u64, "TEST_NUM"), u64 == 1048576)
+	checkOK(t, ec.Float64Var(&f64, "TEST_NUM"), f64 == 1048576)
+	checkOK(t, ec.StringVar(&s, "TEST_NUM"), s == "1048576")
+	checkOK(t, ec.Var(&ss, "TEST_NUM"), ss.String() == "1048576")
+	checkOK(t, ec.DurationVar(&d, "TEST_DURATION"), d == 100*time.Millisecond)
+	checkOK(t, ec.BoolVar(&b, "TEST_BOOL_TRUE"), b)
+	checkOK(t, ec.BoolVar(&b, "TEST_BOOL_FALSE"), !b)
+
+	if ec.BoolVar(&b, "TEST_BOOL_INVALID") == nil {
+		t.Error("Expected parse error")
+	}
 }
