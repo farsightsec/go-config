@@ -28,7 +28,8 @@ Contains types useful for validating, parsing, and loading values of
 some useful types in configuration files.
 
 %prep
-%setup -q -n %{repo}-%{commit}
+%goprep -e
+#%setup -q -n %{repo}-%{commit}
 
 
 %build
