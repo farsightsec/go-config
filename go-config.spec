@@ -18,7 +18,7 @@ Summary:	Minimalist go config library
 
 License:	MPLv2.0
 URL:		https://github.com/farsightsec/go-config
-Source0:	https://github.com/farsightsec/go-config/archive/v%{version}.tar.gz
+Source0:	https://github.com/farsightsec/go-config/archive/%{name}-%{version}.tar.gz
 
 BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} 
 	
