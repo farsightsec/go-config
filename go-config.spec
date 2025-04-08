@@ -28,6 +28,8 @@ BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
 Contains types useful for validating, parsing, and loading values of
 some useful types in configuration files.
 
+%gopkg
+
 %prep
 %goprep -e
 #%setup -q -n %{repo}-%{commit}
