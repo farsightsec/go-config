@@ -28,35 +28,31 @@ BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
 Contains types useful for validating, parsing, and loading values of
 some useful types in configuration files.
 
-%gopkg
+%package -n %{goname}-devel
+Summary:	%{summary}
+BuildArch:  noarch
+%description -n %{goname}-devel
+%{common_description}
 
 %prep
 %goprep -e
 #%setup -q -n %{repo}-%{commit}
 
-
-%build
-
 %install
-install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
+find .
 for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
-    echo "%%dir %%{gopath}/src/%%{import_path}/$(dirname $file)" >> file-list
-    install -d -p %{buildroot}/%{gopath}/src/%{import_path}/$(dirname $file)
-    cp -pav $file %{buildroot}/%{gopath}/src/%{import_path}/$file
-    echo "%%{gopath}/src/%%{import_path}/$file" >> file-list
+    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list
+    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
+    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file
+    echo "%%{gopath}/src/%%{goipath}/$file" >> devel.file-list
 done
-sort -u -o file-list file-list
+sort -u -o devel.file-list devel.file-list
 
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
-%files -f file-list 
 %license LICENSE 
 %doc README.md
-%dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
+%files -n %{goname}-devel -f devel.file-list
 
 %changelog
-
-
-
-
