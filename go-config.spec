@@ -11,7 +11,7 @@
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
 
-Name:		go-config-devel		
+Name:		go-config		
 Version:	0.1.1
 Release:	1%{?dist}
 Summary:	Minimalist go config library
@@ -23,7 +23,6 @@ Source0:	https://github.com/farsightsec/go-config/archive/%{name}.tar.gz
 
 BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} 
 	
-
 %description
 Contains types useful for validating, parsing, and loading values of
 some useful types in configuration files.
@@ -39,7 +38,6 @@ BuildArch:  noarch
 #%setup -q -n %{repo}-%{commit}
 
 %install
-find .
 for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
     echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list
     install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
