@@ -41,7 +41,8 @@ sort -u -o devel.file-list devel.file-list
 #define license tag if not already defined
 %{!?_licensedir:%global license %doc}
 
-%license LICENSE 
+# Not sure how this should be done right in rhel8
+#%license LICENSE 
 %doc README.md
 %files -n %{goname}-devel -f devel.file-list
 
