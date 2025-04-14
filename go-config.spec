@@ -1,5 +1,4 @@
 %global debug_package %{nil}
-%global debug_package %{nil}
 %global provider        github
 %global provider_tld    com
 %global project         farsightsec
@@ -10,6 +9,7 @@
 %global commit          3eab84970e6bc00874ccf1763605ab080d45e1e9 
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
+%gometa
 
 Name:		go-config		
 Version:	0.1.1
@@ -34,8 +34,7 @@ BuildArch:  noarch
 %{common_description}
 
 %prep
-%goprep -e
-#%setup -q -n %{repo}-%{commit}
+%setup -q
 
 %install
 for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
