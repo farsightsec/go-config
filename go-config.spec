@@ -42,7 +42,7 @@ sort -u -o devel.file-list devel.file-list
 
 # Not sure how this should be done right in rhel8
 #%license LICENSE 
-%doc README.md
+#%doc README.md
 %files -n %{goname}-devel -f devel.file-list
 
 %changelog
