@@ -11,8 +11,7 @@ Summary:	Minimalist go config library
 
 License:	MPLv2.0
 URL:		https://github.com/farsightsec/go-config
-#Source0:	https://github.com/farsightsec/go-config/archive/%{name}-%{version}.tar.gz
-Source0:	https://github.com/farsightsec/go-config/archive/%{name}.tar.gz
+Source0:	https://github.com/farsightsec/go-config/archive/%{name}-%{version}.tar.gz
 
 BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} 
 	
@@ -39,7 +38,7 @@ done
 sort -u -o devel.file-list devel.file-list
 
 #define license tag if not already defined
-%{!?_licensedir:%global license %doc}
+#%{!?_licensedir:%global license %doc}
 
 # Not sure how this should be done right in rhel8
 #%license LICENSE 
