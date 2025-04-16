@@ -2,12 +2,12 @@
 # https://github.com/farsightsec/go-config
 %global goipath         github.com/farsightsec/go-config
 
-%gometa
-
 Name:		go-config		
 Version:	0.1.1
 Release:	1%{?dist}
 Summary:	Minimalist go config library
+
+%gometa
 
 License:	MPLv2.0
 URL:		https://github.com/farsightsec/go-config
