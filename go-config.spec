@@ -38,7 +38,6 @@ Source0:	https://github.com/farsightsec/go-config/archive/%{name}-%{version}.tar
 
 %description %{common_description}
 
-%generate_buildrequires
 %go_generate_buildrequires
 
 %gopkg
