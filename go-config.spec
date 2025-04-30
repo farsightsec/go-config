@@ -5,7 +5,7 @@ Summary:	%{summary} \
 BuildArch:  noarch \
 %description -n %{goname}-devel \
 %{common_description}
-%global goprep(-A) %setup -q
+%global goprep(A) %setup -q
 %global generate_buildrequires echo "Need more specific macro on rhel8"
 %global gopkginstall for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do \
     echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list ;\
