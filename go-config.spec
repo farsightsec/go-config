@@ -1,27 +1,27 @@
 # Define backup go macros
 %if %{rhel} == 8
-%global gopkg %package -n %{goname}-devel
-Summary:	%{summary}
-BuildArch:  noarch
-%description -n %{goname}-devel
-%{common_description}
+%global gopkg %package -n %{goname}-devel \
+Summary:	%{summary} \
+BuildArch:  noarch \
+%description -n %{goname}-devel \
+%{common_description} \
 ...
-%global goprep %setup -q
+%global goprep %setup -q \
 ...
-%global gopkginstall for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do
-    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list
-    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file)
-    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file
-    echo "%%{gopath}/src/%%{goipath}/$file" >> devel.file-list
-done
-sort -u -o devel.file-list devel.file-list
+%global gopkginstall for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do \
+    echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list ;\
+    install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file) ;\
+    cp -pav $file %{buildroot}/%{gopath}/src/%{goipath}/$file ;\
+    echo "%%{gopath}/src/%%{goipath}/$file" >> devel.file-list ;\
+done ;\
+sort -u -o devel.file-list devel.file-list \
 ...
-%global gopkgfiles %files -n %{goname}-devel -f devel.file-list
+%global gopkgfiles %files -n %{goname}-devel -f devel.file-list \
 ...
-%global gocheck echo "skipping gocheck on rhel8"
+%global gocheck echo "skipping gocheck on rhel8" \
 ...
 # Specific BuildRequires macro
-%global go_generate_buildrequires BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
+%global go_generate_buildrequires BuildRequires:	%{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang} \
 ...
 %endif
 
