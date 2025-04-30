@@ -5,7 +5,7 @@ Summary:	%{summary} \
 BuildArch:  noarch \
 %description -n %{goname}-devel \
 %{common_description}
-%global goprep %setup -q
+%global goprep(-A) %setup -q
 %global gopkginstall for file in $(find . -iname "*.go" \! -iname "*_test.go" \! -iname "main.go" ) ; do \
     echo "%%dir %%{gopath}/src/%%{goipath}/$(dirname $file)" >> devel.file-list ;\
     install -d -p %{buildroot}/%{gopath}/src/%{goipath}/$(dirname $file) ;\
