@@ -1,5 +1,5 @@
 # Define backup go macros
-%if %{rhel} = 8
+%if %{rhel} == 8
 %global gopkg
 %package -n %{goname}-devel
 Summary:	%{summary}
