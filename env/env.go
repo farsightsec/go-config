@@ -178,7 +178,7 @@ func NewConfig(errorHandling ErrorHandling) envConfig {
 // handleError handles envConfig on error behavior
 func (e *envConfig) handleError(key string, err error) error {
 	if err != nil && e.errorHandling == ExitOnError {
-		fmt.Fprintf(os.Stderr, "%s encountered parsing error: %v\n", key, err)
+		fmt.Fprintf(os.Stderr, "Encountered parsing error on key '%s': %v\n", key, err)
 		os.Exit(1)
 	}
 
