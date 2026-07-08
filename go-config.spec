@@ -1,5 +1,6 @@
 %global debug_package %{nil}
 %global goipath         github.com/farsightsec/go-config
+Version:        0.1.1
 
 %gometa
 
@@ -8,7 +9,6 @@ Contains types useful for validating, parsing, and loading values of
 some useful types in configuration files.}
 
 Name:           go-config
-Version:        0.1.1
 Release:        1%{?dist}
 Summary:        Minimalist Go config library
 
