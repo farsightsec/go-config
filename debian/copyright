@@ -3,10 +3,12 @@ Upstream-Name: golang-github-farsightsec-go-config
 Source: <http://github.com/farsightsec/go-config>
 
 Files: *
+Copyright: 2023, 2026 Domaintools LLC <software@domaintools.com>
 Copyright: 2015-2018, 2019 Farsight Security, Inc. <software@farsightsecurity.com>
 License: MPL-2.0
 
 Files: debian/*
+Copyright: 2023, 2026 Domaintools LLC <software@domaintools.com>
 Copyright: 2018, 2019 Farsight Security, Inc. <software@farsightsecurity.com>
 License: MPL-2.0
 

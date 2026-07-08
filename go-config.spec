@@ -1,6 +1,6 @@
 %global debug_package %{nil}
 %global goipath         github.com/farsightsec/go-config
-Version:        0.1.1
+Version:        0.2.0
 
 %gometa
 
@@ -53,5 +53,6 @@ done
 %{gopath}/src/%{goipath}
 
 %changelog
+* Tue Jul 08 2026 release 0.2.0-1
 * Tue Jul 08 2025 DomainTools RelEng <releng@domaintools.com> - 0.1.1-1
 - Initial RPM packaging (synthesized from test branches)
