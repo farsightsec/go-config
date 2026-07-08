@@ -1,5 +1,13 @@
+go-config (0.2.0-1) debian-farsightsec; urgency=medium
+
+  * Add envConfig type with configurable error handling.
+  * Add go.mod and go.sum.
+  * Add RPM spec file.
+
+ -- DomainTools LLC <software@domaintools.com>  Wed, 08 Jul 2026 13:43:57 -0500
+
 go-config (0.1.1-1) debian-farsightsec; urgency=medium
 
   * Initial public release.
 
- -- Farsight Security, Inc. <software@farsightsecurity.com>  Fri, 23 Aug 2019 12:00:00 -0500 
+ -- Farsight Security Inc. <software@farsightsecurity.com>  Fri, 23 Aug 2019 12:00:00 -0500
