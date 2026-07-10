@@ -10,12 +10,9 @@ package env
 
 import (
 	"flag"
-	"os"
-	"path/filepath"
-	"testing"
+	"log"
 
 	"github.com/farsightsec/go-config"
-	"github.com/stretchr/testify/require"
 )
 
 type ExampleConfig struct {
@@ -24,64 +21,38 @@ type ExampleConfig struct {
 	URL     config.URL
 }
 
-// Test_Options_Precedence demonstrates the four-level precedence order for user options:
-//  1. built-in defaults (lowest)
-//  2. configuration file parameters
-//  3. environment parameters
-//  4. command line parameters (highest)
-
-func Test_Options_Precedence(t *testing.T) {
+func Example() {
 	var conf ExampleConfig
+	confFile := "/etc/example/example.conf"
 
-	// Set defaults and bind command line flags
-	fs := flag.NewFlagSet("example", flag.ContinueOnError)
+	// First, set up command line arg bindings and default values with
+	// the flag package.
+	flag.StringVar(&conf.Title, "title", "Default Title", "Application title")
+	flag.IntVar(&conf.Version, "version", 2, "App version")
 
-	fs.StringVar(&conf.Title, "title", "default-title", "Application title")
-	fs.IntVar(&conf.Version, "version", 1, "App version")
-	require.NoError(t, conf.URL.Set("http://default.example/"))
-	fs.Var(&conf.URL, "url", "App URL")
+	// Default values not associated with a flag (or for flag.Var) can
+	// be set explicitly here
+	conf.URL.Set("http://www.farsightsecurity.com/")
+	flag.Var(&conf.URL, "url", "App URL")
 
-	require.Equal(t, "default-title", conf.Title)
-	require.Equal(t, 1, conf.Version)
-	require.Equal(t, "http://default.example/", conf.URL.String())
+	// Load values from configuration file
+	err := config.LoadYAML(&conf, confFile, false)
+	if err != nil {
+		log.Fatalf("Failed to load config from %s: %v", confFile, err)
+	}
 
-	// Allow the config file path to be overridden by the environment
-	// This must happen before LoadYAML because the command line is not parsed until later
-	confFile := filepath.Join(t.TempDir(), "example.conf")
-	require.NoError(t, os.WriteFile(confFile, []byte(
-		"title: file-title\nversion: 2\nurl: http://file.example/\n",
-	), 0600))
+	// Next, import new defaults from the environment with this package.
+	StringVar(&conf.Title, "EXAMPLE_TITLE")
+	if err := IntVar(&conf.Version, "EXAMPLE_VERSION"); err != nil {
+		log.Fatal("Invalid EXAMPLE_VERSION value: ", err)
+	}
+	if err := Var(&conf.URL, "EXAMPLE_URL"); err != nil {
+		log.Fatal("Invalid EXAMPLE_URL value: ", err)
+	}
 
-	t.Setenv("EXAMPLE_CONF", confFile)
-	require.NoError(t, StringVar(&confFile, "EXAMPLE_CONF"))
+	// Allow config file to be overridden by environment
+	StringVar(&confFile, "EXAMPLE_CONF")
 
-	// Load values from the configuration file, overriding defaults
-	require.NoError(t, config.LoadYAML(&conf, confFile, false))
-	require.Equal(t, "file-title", conf.Title)
-	require.Equal(t, 2, conf.Version)
-	require.Equal(t, "http://file.example/", conf.URL.String())
-
-	// Import values from environment, overriding file values
-	t.Setenv("EXAMPLE_TITLE", "env-title")
-	t.Setenv("EXAMPLE_VERSION", "3")
-	t.Setenv("EXAMPLE_URL", "http://env.example/")
-
-	require.NoError(t, StringVar(&conf.Title, "EXAMPLE_TITLE"))
-	require.NoError(t, IntVar(&conf.Version, "EXAMPLE_VERSION"))
-	require.NoError(t, Var(&conf.URL, "EXAMPLE_URL"))
-
-	require.Equal(t, "env-title", conf.Title)
-	require.Equal(t, 3, conf.Version)
-	require.Equal(t, "http://env.example/", conf.URL.String())
-
-	// Parse command line flags, overriding environment variables
-	require.NoError(t, fs.Parse([]string{
-		"-title", "cli-title",
-		"-version", "4",
-		"-url", "http://cli.example/",
-	}))
-
-	require.Equal(t, "cli-title", conf.Title)
-	require.Equal(t, 4, conf.Version)
-	require.Equal(t, "http://cli.example/", conf.URL.String())
+	// Finally, read values from command line arguments
+	flag.Parse()
 }
