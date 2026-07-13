@@ -35,6 +35,9 @@ func Example() {
 	conf.URL.Set("http://www.farsightsecurity.com/")
 	flag.Var(&conf.URL, "url", "App URL")
 
+	// Allow config file to be overridden by environment
+	StringVar(&confFile, "EXAMPLE_CONF")
+
 	// Load values from configuration file
 	err := config.LoadYAML(&conf, confFile, false)
 	if err != nil {
@@ -49,9 +52,6 @@ func Example() {
 	if err := Var(&conf.URL, "EXAMPLE_URL"); err != nil {
 		log.Fatal("Invalid EXAMPLE_URL value: ", err)
 	}
-
-	// Allow config file to be overridden by environment
-	StringVar(&confFile, "EXAMPLE_CONF")
 
 	// Finally, read values from command line arguments
 	flag.Parse()
