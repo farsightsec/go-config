@@ -1,5 +1,6 @@
 /*
  * Copyright 2018 Farsight Security, Inc.
+ * Copyright 2026 DomainTools LLC
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,7 +28,6 @@ func Example() {
 
 	// First, set up command line arg bindings and default values with
 	// the flag package.
-	//
 	flag.StringVar(&conf.Title, "title", "Default Title", "Application title")
 	flag.IntVar(&conf.Version, "version", 2, "App version")
 
@@ -36,15 +36,6 @@ func Example() {
 	conf.URL.Set("http://www.farsightsecurity.com/")
 	flag.Var(&conf.URL, "url", "App URL")
 
-	// Next, import new defaults from the environment with this package.
-	StringVar(&conf.Title, "EXAMPLE_TITLE")
-	if err := IntVar(&conf.Version, "EXAMPLE_VERSION"); err != nil {
-		log.Fatal("Invalid EXAMPLE_VERSION value: ", err)
-	}
-	if err := Var(&conf.URL, "EXAMPLE_URL"); err != nil {
-		log.Fatal("Invalid EXAMPLE_URL value: ", err)
-	}
-
 	// Allow config file to be overridden by environment
 	StringVar(&confFile, "EXAMPLE_CONF")
 
@@ -52,6 +43,15 @@ func Example() {
 	err := config.LoadYAML(&conf, confFile, false)
 	if err != nil {
 		log.Fatalf("Failed to load config from %s: %v", confFile, err)
+	}
+
+	// Next, import new defaults from the environment with this package.
+	StringVar(&conf.Title, "EXAMPLE_TITLE")
+	if err := IntVar(&conf.Version, "EXAMPLE_VERSION"); err != nil {
+		log.Fatal("Invalid EXAMPLE_VERSION value: ", err)
+	}
+	if err := Var(&conf.URL, "EXAMPLE_URL"); err != nil {
+		log.Fatal("Invalid EXAMPLE_URL value: ", err)
 	}
 
 	// Finally, read values from command line arguments

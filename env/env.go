@@ -1,5 +1,6 @@
 /*
  * Copyright 2018 Farsight Security, Inc.
+ * Copyright 2026 DomainTools LLC
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,18 +16,20 @@
 // files, and command line flags. To implement the usual precedence of:
 //
 //  1. built-in defaults (lowest)
-//  2. environment parameters
-//  3. configuration file parameters
+//  2. configuration file parameters
+//  3. environment parameters
 //  4. command line parameters (highest)
 //
 // define defaults and command line bindings (with the flag package) first,
-// followed by environment bindings with this package. Then load values from
-// configuration files and finally parse the command line flags. See the
-// example included in this package for illustration.
+// load values from configuration files, followed by environment bindings and
+// finally parse the command line flags. See the example included in this
+// package for illustration.
 //
 // Note that in this scheme, an alternate config file location must be provided
 // in the environment, and not on the command line, as the command line is
 // not parsed until after the configuration file is read.
+//
+
 package env
 
 import (
