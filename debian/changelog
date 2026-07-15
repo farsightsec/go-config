@@ -1,8 +1,9 @@
-go-config (0.2.0-1) debian-farsightsec; urgency=medium
+go-config (0.2.0) debian-farsightsec; urgency=medium
 
   * Add envConfig type with configurable error handling.
   * Add go.mod and go.sum.
   * Add RPM spec file.
+  * Amend options precedence comment and example.
 
  -- DomainTools LLC <software@domaintools.com>  Wed, 08 Jul 2026 13:43:57 -0500
 
