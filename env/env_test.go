@@ -1,4 +1,5 @@
 /*
+ * Copyright 2026 DomainTools LLC
  * Copyright 2023 Farsight Security, Inc.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -9,10 +10,11 @@
 package env
 
 import (
-	"github.com/farsightsec/go-config"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/farsightsec/go-config"
 )
 
 func init() {
