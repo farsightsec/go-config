@@ -1,3 +1,9 @@
+go-config (0.3.0) debian-farsightsec; urgency=medium
+
+  * Add unit tests.
+
+ -- DomainTools LLC <software@domaintools.com>  Fri, 31 Jul 2026 16:24:26 -0500
+
 go-config (0.2.0) debian-farsightsec; urgency=medium
 
   * Add envConfig type with configurable error handling.

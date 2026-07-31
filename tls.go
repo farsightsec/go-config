@@ -56,7 +56,7 @@ func (i invalidClientAuthType) Error() string {
 type invalidClientAuthTypeValue tls.ClientAuthType
 
 func (i invalidClientAuthTypeValue) Error() string {
-	return fmt.Sprintf("Invalid ClientAuthType value %v", int(i))
+	return fmt.Sprintf("Invalid ClientAuthType value %v", tls.ClientAuthType(i))
 }
 
 // Set satisfies the flag.Value interface.
